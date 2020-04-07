@@ -47,9 +47,9 @@ func getFieldNamesRecur(data interface{}, iterCount int) []string {
 		switch t.Field(i).Type.Kind() {
 		case reflect.Struct:
 			if v.Field(i).CanAddr() {
-				fieldNames = append(fieldNames, GetFieldNamesRecursively(v.Field(i).Addr().Interface())...)
+				fieldNames = append(fieldNames, getFieldNamesRecur(v.Field(i).Addr().Interface(), iterCount)...)
 			} else {
-				fieldNames = append(fieldNames, GetFieldNamesRecursively(v.Field(i).Interface())...)
+				fieldNames = append(fieldNames, getFieldNamesRecur(v.Field(i).Interface(), iterCount)...)
 			}
 		default:
 			fieldNames = append(fieldNames, t.Field(i).Name)

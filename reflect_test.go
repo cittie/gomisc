@@ -29,26 +29,36 @@ func newTestStruct() *MainStruct {
 	return ms
 }
 
-func TestGetFieldNamesRecur(t *testing.T) {
-	structVal := newTestStruct()
-	var intVal int64 = 32
-	var cusVal CustomType = 255
+type StructA struct {
+	pb *StructB
+}
 
-	tests := []struct {
-		in  interface{}
-		out []string
-	}{
-		{structVal, []string{"MID", "ID", "num", "mNum"}},
-		{*structVal, []string{"MID", "ID", "num", "mNum"}},
-		{intVal, []string{"int64"}},
-		{&intVal, []string{"int64"}},
-		{cusVal, []string{"CustomType"}},
-		{&cusVal, []string{"CustomType"}},
-	}
+type StructB struct {
+	pa *StructA
+}
 
-	for i, test := range tests {
-		assert.Equal(t, test.out, GetFieldNamesRecursively(test.in), i)
-	}
+func TestGetFieldNamesRecursively(t *testing.T) {
+	t.Run("Normal", func(t *testing.T) {
+		structVal := newTestStruct()
+		var intVal int64 = 32
+		var cusVal CustomType = 255
+
+		tests := []struct {
+			in  interface{}
+			out []string
+		}{
+			{structVal, []string{"MID", "ID", "num", "mNum"}},
+			{*structVal, []string{"MID", "ID", "num", "mNum"}},
+			{intVal, []string{"int64"}},
+			{&intVal, []string{"int64"}},
+			{cusVal, []string{"CustomType"}},
+			{&cusVal, []string{"CustomType"}},
+		}
+
+		for i, test := range tests {
+			assert.Equal(t, test.out, GetFieldNamesRecursively(test.in), i)
+		}
+	})
 }
 
 func BenchmarkGetFieldNamesRecur(b *testing.B) {
